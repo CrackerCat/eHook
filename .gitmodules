@@ -1,0 +1,9 @@
+[submodule "libbpf"]
+	path = libbpf
+	url = https://android.googlesource.com/platform/external/libbpf
+[submodule "ebpfmanager"]
+	path = ebpfmanager
+	url = https://github.com/SeeFlowerX/ebpfmanager
+[submodule "ebpf"]
+	path = ebpf
+	url = https://github.com/SeeFlowerX/ebpf

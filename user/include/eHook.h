@@ -38,7 +38,7 @@ static __always_inline void log_internal(char* ptr, struct pt_regs* ctx) {
     bpf_perf_event_output(ctx, &log_maps, BPF_F_CURRENT_CPU, ptr, __strlen(ptr));
 }
 
-#define SUBMIT(ptr,len) bpf_perf_event_output(ctx, &event_map, BPF_F_CURRENT_CPU, ptr, len);
+#define SUBMIT(ptr,len) bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, ptr, len);
 
 #define GET(name) \
 ({__u32 ___zero = 0;\

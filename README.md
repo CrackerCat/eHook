@@ -42,7 +42,7 @@
   }
   
   static __always_inline void onLeave(struct pt_regs* ctx) {
-  	char s = GET(b);
+      char s = GET(b);
       LOG(b);
   }
   ```
@@ -73,7 +73,7 @@
    export GOPROXY=https://goproxy.cn,direct
    export GO111MODULE=on
    
-   git clone --recursive https://github.com/ShinoLeah/eDBG.git
+   git clone --recursive https://github.com/ShinoLeah/eHook.git
    ./build_env.sh
    ```
 

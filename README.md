@@ -47,7 +47,7 @@
   }
   ```
 
-  为了避免 eBPF 栈大小限制，尽量用 `VARIABLES_POOL` 定义变量池，用 `GET` 和 `SET` 操作变量。
+  为了避免 eBPF 栈大小限制（512字节），尽量用 `VARIABLES_POOL` 定义变量池，将占用空间较大的变量或全局变量放入变量池中，用 `GET` 和 `SET` 操作变量。
 
   使用 `LOG(char*)` 打印信息，`SUBMIT(buffer, len)` 提交你的自定义数据到 `OnEvent`
 

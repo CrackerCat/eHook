@@ -27,7 +27,7 @@
   const Leave_Offset = 0x9C158
   ```
 
-- 在 `user.c` 中编写你的 eBPF 模块。可以使用任意的 eBPF API 来做读写操作。
+- 在 `user.c` 中编写你的 eBPF 模块。可以使用任意的 eBPF API 来做读写等操作，详见 [eBPF Docs](https://docs.ebpf.io/)。
 
   ```c++
   struct data_t {
@@ -47,9 +47,9 @@
   }
   ```
 
-  为了避免 eBPF 栈大小限制，尽量用 `VARIABLES_POOL` 定义变量池，用 GET 和 SET 操作变量。
+  为了避免 eBPF 栈大小限制，尽量用 `VARIABLES_POOL` 定义变量池，用 `GET` 和 `SET` 操作变量。
 
-  使用 LOG(char*) 打印信息，SUBMIT(buffer, len) 提交你的自定义数据到 OnEvent
+  使用 `LOG(char*)` 打印信息，`SUBMIT(buffer, len)` 提交你的自定义数据到 `OnEvent`
 
 - 如果需要，在 `listener.go` 中编写数据处理函数。
 
@@ -83,7 +83,7 @@
    make
    ```
 
-​	可以在 Makefile 中指定项目名称，产物在 `bin/` 目录下。
+​	可以在 Makefile 中指定项目名称，产物在 `bin/` 目录下，使用 `adb push` 到手机上之后运行即可。
 
 ## ❤️‍🩹 其他
 

@@ -14,7 +14,7 @@
 
 ## 💕 使用
 
-工作目录在 `/user` 目录下
+在 `/user` 目录下工作
 
 - 在 `config.go` 里设置目标信息，如：
 
@@ -27,7 +27,7 @@
   const Leave_Offset = 0x9C158
   ```
 
-- 在 `user.c` 中编写你的 eBPF 模块。可以使用任意的 eBPF API 如读写。
+- 在 `user.c` 中编写你的 eBPF 模块。可以使用任意的 eBPF API 来做读写操作。
 
   ```c++
   struct data_t {
@@ -43,7 +43,7 @@
   
   static __always_inline void onLeave(struct pt_regs* ctx) {
   	char s = GET(b);
-      LOG(b)
+      LOG(b);
   }
   ```
 
@@ -53,7 +53,7 @@
 
 - 如果需要，在 `listener.go` 中编写数据处理函数。
 
-  ```
+  ```go
   func OnEvent(cpu int, data []byte, perfmap *manager.PerfMap, manager *manager.Manager) {
   	// Write your data handler here
       fmt.Printf("%s\n", data)
@@ -66,7 +66,7 @@
 
    本项目在 x86 Linux 下交叉编译
 
-   ```
+   ```shell
    sudo apt-get update
    sudo apt-get install golang==1.18
    sudo apt-get install clang==14
@@ -79,8 +79,13 @@
 
 2. 编译
 
-   ```
+   ```shell
    make
    ```
 
 ​	可以在 Makefile 中指定项目名称，产物在 `bin/` 目录下。
+
+## ❤️‍🩹 其他
+
+- 喜欢的话可以点点右上角 Star 🌟
+- 欢迎提出 Issue 或 PR！

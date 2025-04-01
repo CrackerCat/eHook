@@ -26,7 +26,7 @@ func CreateProbeHandler(BTF_File string) *ProbeHandler {
 }
 
 func (this *ProbeHandler) OnEvent(cpu int, data []byte, perfmap *manager.PerfMap, manager *manager.Manager) {
-    fmt.Printf("%s\n", data)
+    fmt.Printf("%s", data)
 }
 
 func (this *ProbeHandler) SetupManagerOptions() error {

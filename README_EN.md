@@ -1,21 +1,17 @@
 # eHook
 
-## ✨ 介绍
+## ✨ Introduction
+- Quickly and conveniently build your uprobe hook modules.
+- Provides some convenient wrappers.
 
-- 快速、方便地构建你的 uprobe hook 模块。
-- 提供一些方便的封装。
+## 🚀 Requirements
+- Currently only supports ARM64 architecture Android systems with ROOT permissions. Recommended to use with [KernelSU](https://github.com/tiann/KernelSU)[1](@ref)
+- Kernel version 5.10+ (Check with `uname -r`)
 
-## 🚀 运行环境
+## 💕 Usage
+Work in the `/user` directory:
 
-- 目前仅支持 ARM64 架构的 Android 系统，需要 ROOT 权限，推荐搭配 [KernelSU](https://github.com/tiann/KernelSU) 使用
-- 系统内核版本5.10+ （可执行`uname -r`查看）
-
-## 💕 使用
-
-在 `/user` 目录下工作
-
-- 在 `config.go` 里设置目标信息，如：
-
+- Configure target information in `config.go`:
   ```go
   const PackageName = "com.android.myapplication"
   const LibraryName = "libc.so"
@@ -23,13 +19,12 @@
   const Enter_Offset = 0xAFF44
   // The offset to which the onLeave function will be attached. 0 if not used.
   const Leave_Offset = 0x9C158
-  ```
 
-  - 可以在`LibraryName`中指定库的绝对路径。
+- You can specify absolute library paths in `LibraryName`.
 
-- 在 `user.c` 中编写你的 eBPF 模块。可以使用给定的封装（详见“API”节），也可以用任意的 eBPF API 来做操作，详见 [eBPF Docs](https://docs.ebpf.io/)。
+- Write your eBPF module in `user.c`. Use provided wrappers (see "API" section) or any eBPF APIs. Refer to eBPF Docs
 
-  ```c++
+  ```c
   struct data_t {
       int a;
       char b;
@@ -47,20 +42,20 @@
   }
   ```
 
-- 如果需要，在 `listener.go` 中编写数据处理函数。
+- Implement data handlers in `listener.go` if needed:
 
   ```go
   func OnEvent(cpu int, data []byte, perfmap *manager.PerfMap, manager *manager.Manager) {
-  	// Write your data handler here
+      // Write your data handler here
       fmt.Printf("%s\n", data)
   }
   ```
 
 ## 💭 API
 
-- `VARIABLES_POOL` 定义全局变量池，可以将需要全局共享的变量或太大的变量放入这个池子。
+- `VARIABLES_POOL`: Defines global variable pool for shared/large variables
 
-  ```c++
+  ```c
   struct data_t {
       int a;
       char b;
@@ -68,28 +63,28 @@
   VARIABLES_POOL(data_t);
   ```
 
-- `GET(name)`：从全局变量池获取变量，等同于  data->name。
+- `GET(name)`: Retrieves variable from pool (equivalent to `data->name`)
 
-  ```c++
+  ```c
   int a = GET(a);
   __builtin_memcpy(GET(b), "xxxxx", 5);
   ```
 
-- `SET(name, var)`：设置变量，等同与 data->name = var; 字符串变量请使用 GET 设置。
+- `SET(name, var)`: Sets variable (equivalent to `data->name = var`). Use `GET` for string variables.
 
-- `READ_KERN(x)`：读取非用户空间变量，如 `READ_KERN(ctx->regs[0])`。
+- `READ_KERN(x)`: Reads non-userspace variables (e.g., `READ_KERN(ctx->regs[0])`)
 
-- `READ(ptr, len)`：读指定的用户空间地址。
+- `READ(ptr, len)`: Reads specified userspace address
 
-- `WRITE(ptr, content)`：写指定的用户空间地址（目标地址必须可写）。
+- `WRITE(ptr, content)`: Writes to specified userspace address (must be writable)
 
-- `LOG(char*, len)`：输出到控制台。
+- `LOG(char*, len)`: Outputs to console
 
-- `SUBMIT(void*, len)`：提交数据到 `listen.go` 的 `OnEvent` 函数。
+- `SUBMIT(void*, len)`: Submits data to `OnEvent` in `listen.go`
 
-## 🧑‍💻 示例
+## 🧑💻 Example
 
-以下是一个绕过 adb 的 property 检查的简单示例：
+Bypass adb property check implementation:
 
 ```go
 // config.go
@@ -99,7 +94,7 @@ const Enter_Offset = 0xAFF44 //__system_property_get
 const Leave_Offset = 0x9C158
 ```
 
-```c++
+```c
 // user.c
 #include "include/eHook.h"
 
@@ -117,8 +112,8 @@ static __always_inline void onEnter(struct pt_regs* ctx) {
     } else {
         SET(X1, 0);
     }
-
 }
+
 static __always_inline void onLeave(struct pt_regs* ctx) {
     if(GET(X1) != 0) {
         LOG("modified.\n", 10);
@@ -127,16 +122,14 @@ static __always_inline void onLeave(struct pt_regs* ctx) {
 }
 ```
 
-## ⚠️ 注意
+## ⚠️ Notes
 
-- eBPF 函数编写有一些严格的限制，如不能使用 libc 等，请自行了解。
-- `Packagename` 参数只用于定位库，如果 hook libc 等系统库将会对所有进程生效。
+- eBPF functions have strict limitations (e.g., cannot use libc). Please research these constraints.
+- `PackageName` parameter is for library targeting. Hooking system libraries like libc will affect all processes.
 
-## 🛫 构建
+## 🛫 Building
 
-1. 环境准备
-
-   本项目在 x86 Linux 下交叉编译
+1. **Environment Setup** (Cross-compile on x86 Linux):
 
    ```shell
    sudo apt-get update
@@ -149,13 +142,16 @@ static __always_inline void onLeave(struct pt_regs* ctx) {
    ./build_env.sh
    ```
 
-2. 编译运行
+2. **Compilation**:
 
    ```shell
    make
    ```
 
-   可以在 Makefile 中指定项目名称，产物在 `bin/` 目录下.
+   - Modify `Makefile` for project naming. Outputs in `bin/`. 
+
+3. **Run**:
+
    ```shell
    adb push bin/eHook_Untitled /data/local/tmp
    adb shell
@@ -165,7 +161,7 @@ static __always_inline void onLeave(struct pt_regs* ctx) {
    ./eHook_Untitled
    ```
 
-## ❤️‍🩹 其他
+## ❤️🩹 Others
 
-- 喜欢的话可以点点右上角 Star 🌟
-- 欢迎提出 Issue 或 PR！
+- Star the repo if you find it useful 🌟
+- Issues and PRs are welcome!
